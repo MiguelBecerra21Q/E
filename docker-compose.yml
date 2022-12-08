@@ -1,0 +1,36 @@
+version: '3'
+services:
+  db:
+    image: postgres:15.1
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: administrator
+      POSTGRES_PASSWORD: password.2326
+    networks:
+      - red1
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - red1
+  api:
+    image: alpine:3.15
+    container_name: api
+    depends_on:
+      - db
+    volumes:
+      - ./web/:/var/www/html/
+    ports: 
+      - 7070:80
+    networks:
+      - red1
+    stdin_open: true
+    tty: true
+    build: .
+networks:
+  red1:
+    external: false
